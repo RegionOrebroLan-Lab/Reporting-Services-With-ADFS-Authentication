@@ -177,6 +177,7 @@ Copy the following dll's
 - Microsoft.IdentityModel.dll
 - RegionOrebroLan.IdentityModel.dll
 - RegionOrebroLan.ReportingServices.dll
+
 to:
   - C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\bin
   - C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\Portal
