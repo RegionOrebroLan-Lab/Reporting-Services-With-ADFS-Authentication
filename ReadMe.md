@@ -74,6 +74,8 @@ to
 ### 3 RSSrvPolicy.config
 **Path:** *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\rssrvpolicy.config*
 
+Allow RegionOrebroLan-StrongName full trust by adding the following section as the first element under the nested code-group with class "FirstMatchCodeGroup":
+
     <configuration>
 	    <mscorlib>
 		    <security>
