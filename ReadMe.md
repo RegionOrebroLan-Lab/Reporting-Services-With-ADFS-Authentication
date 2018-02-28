@@ -35,7 +35,7 @@ you need to configure the **Claims to Windows Token Service** (windows-service).
                     <!-- <add value="NT AUTHORITY\Local Service" /> -->
                     <!-- <add value="NT AUTHORITY\System" /> -->
                     <!-- <add value="NT AUTHORITY\Authenticated Users" /> -->
-                    <add value="YOURDOMAIN\your-account-name" />
+                    <add value="NT Service\SQLServerReportingServices" />
                 </allowedCallers>
             </windowsTokenService>
         </configuration>
@@ -45,7 +45,8 @@ Then restart the windows-service **Claims to Windows Token Service**.
 ### 2 RSReportServer.config
 **Path:** *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\rsreportserver.config*
 
-From
+#### 2.1 /Configuration/Authentication/AuthenticationTypes
+Change from
 
     <Configuration>
 	    ...
@@ -70,6 +71,85 @@ to
 	    </Authentication>
 	    ...
     </Configuration>
+
+#### 2.2 /Configuration/Extensions/Authentication
+Change from
+
+    <Configuration>
+        ...
+        <Extensions>
+            ...
+            <Authentication>
+                <Extension Name="Windows" Type="Microsoft.ReportingServices.Authentication.WindowsAuthentication, Microsoft.ReportingServices.Authorization" />
+            </Authentication>
+            ...
+        </Extensions>
+        ...
+    </Configuration>
+
+to
+
+    <Configuration>
+        ...
+        <Extensions>
+            ...
+            <Authentication>
+                <Extension Name="Windows" Type="RegionOrebroLan.ReportingServices.Authentication.WindowsAuthentication, RegionOrebroLan.ReportingServices" />
+            </Authentication>
+            ...
+        </Extensions>
+        ...
+    </Configuration>
+
+#### 2.3 /Configuration/UI (cookies to pass through)
+Add the following as the first child to /Configuration/UI:
+
+    <Configuration>
+        ...
+        <UI>
+            <CustomAuthenticationUI>
+                <PassThroughCookies>
+                    <PassThroughCookie>FedAuth</PassThroughCookie>
+                    <PassThroughCookie>FedAuth1</PassThroughCookie>
+                </PassThroughCookies>
+            </CustomAuthenticationUI>
+            ...
+        </UI>
+        ...
+    </Configuration>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 Cookies:
