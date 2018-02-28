@@ -71,6 +71,12 @@ to
 	    ...
     </Configuration>
 
+
+Cookies:
+- FedAuth
+- FedAuth1
+
+
 ### 3 RSSrvPolicy.config
 **Path:** *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\rssrvpolicy.config*
 
