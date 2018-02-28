@@ -118,45 +118,6 @@ Add the following as the first child to /Configuration/UI:
         ...
     </Configuration>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Cookies:
-- FedAuth
-- FedAuth1
-
-
 ### 3 RSSrvPolicy.config
 **Path:** *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\rssrvpolicy.config*
 
@@ -213,8 +174,9 @@ The **PublicKeyBlob**-value depends on what strong-name-key-file you used to sig
 
 ### 5 Deploy assemblies
 Copy the following dll's
-- Microsoft.IdentityModel
-- RegionOrebroLan.IdentityModel
+- Microsoft.IdentityModel.dll
+- RegionOrebroLan.IdentityModel.dll
+- RegionOrebroLan.ReportingServices.dll
 to:
   - C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\bin
   - C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\Portal
