@@ -120,7 +120,7 @@ The **PublicKeyBlob**-value depends on what strong-name-key-file you used to sig
 
 7. Save "GetPublicKey.cmd"
 8. Run the "GetPublicKey.cmd" file (double click it)
-9. Copy the displayed key and paste it in to your AssemblyInfo.cs file (remove any line breaks)
+9. Copy the displayed key and paste it, then remove any line breaks
 
 ### 4 Web.config
 **Path:** *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\web.config**
