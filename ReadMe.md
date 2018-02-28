@@ -2,7 +2,8 @@
 
 ## Help/information about custom security for Reporting Services
 - [Configure Custom or Forms Authentication on the Report Server](https://docs.microsoft.com/en-us/sql/reporting-services/security/configure-custom-or-forms-authentication-on-the-report-server/)
-- https://github.com/Microsoft/Reporting-Services/tree/master/CustomSecuritySample
+- https://github.com/Microsoft/Reporting-Services/tree/master/CustomSecuritySample/
+- [How to install custom security extensions](https://docs.microsoft.com/en-us/sql/reporting-services/extensions/security-extension/how-to-install-custom-security-extensions/)
 
 ## Custom assemblies used
 
