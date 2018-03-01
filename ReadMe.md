@@ -46,7 +46,20 @@ Then restart the windows-service **Claims to Windows Token Service**.
 ### 2 RSReportServer.config
 **Path:** *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\rsreportserver.config*
 
-#### 2.1 /Configuration/Authentication/AuthenticationTypes
+#### 2.1 /Configuration (machine-keys)
+Howto generate a machine-key with IIS: [Easiest way to generate MachineKey](https://blogs.msdn.microsoft.com/amb/2012/07/31/easiest-way-to-generate-machinekey/)
+
+Add the following child to /Configuration:
+
+    <Configuration>
+        ...
+        <MachineKey Decryption="AES" DecryptionKey="[YOUR-DECRYPTION-KEY]" Validation="AES" ValidationKey="[YOUR-VALIDATION-KEY]" />
+        ...
+    </Configuration>
+
+**The casing of the attributes is important!**
+
+#### 2.2 /Configuration/Authentication/AuthenticationTypes
 Change from
 
     <Configuration>
@@ -73,7 +86,7 @@ to
 	    ...
     </Configuration>
 
-#### 2.2 /Configuration/Extensions/Authentication
+#### 2.3 /Configuration/Extensions/Authentication
 Change from
 
     <Configuration>
@@ -95,15 +108,46 @@ to
         <Extensions>
             ...
             <Authentication>
-                <Extension Name="Windows" Type="RegionOrebroLan.ReportingServices.Authentication.WindowsAuthentication, RegionOrebroLan.ReportingServices" />
+                <Extension Name="Forms" Type="RegionOrebroLan.ReportingServices.Authentication.FederationAuthentication, RegionOrebroLan.ReportingServices" />
             </Authentication>
             ...
         </Extensions>
         ...
     </Configuration>
 
-#### 2.3 /Configuration/UI (cookies to pass through)
+#### 2.4 /Configuration/Extensions/Security
+Change from
+
+    <Configuration>
+        ...
+        <Extensions>
+            ...
+            <Security>
+                <Extension Name="Windows" Type="Microsoft.ReportingServices.Authorization.WindowsAuthorization, Microsoft.ReportingServices.Authorization" />
+            </Security>
+            ...
+        </Extensions>
+        ...
+    </Configuration>
+
+to
+
+    <Configuration>
+        ...
+        <Extensions>
+            ...
+            <Security>
+                <Extension Name="Forms" Type="Microsoft.ReportingServices.Authorization.WindowsAuthorization, Microsoft.ReportingServices.Authorization" />
+            </Security>
+            ...
+        </Extensions>
+        ...
+    </Configuration>
+
+#### 2.5 /Configuration/UI (cookies to pass through)
 Add the following as the first child to /Configuration/UI:
+
+##### 2.5.1 Production-environment (SSL)
 
     <Configuration>
         ...
@@ -113,6 +157,23 @@ Add the following as the first child to /Configuration/UI:
                     <PassThroughCookie>FedAuth</PassThroughCookie>
                     <PassThroughCookie>FedAuth1</PassThroughCookie>
                 </PassThroughCookies>
+            </CustomAuthenticationUI>
+            ...
+        </UI>
+        ...
+    </Configuration>
+
+##### 2.5.2 Development-environment (if you are not using SSL)
+
+    <Configuration>
+        ...
+        <UI>
+            <CustomAuthenticationUI>
+                <PassThroughCookies>
+                    <PassThroughCookie>FedAuth</PassThroughCookie>
+                    <PassThroughCookie>FedAuth1</PassThroughCookie>
+                </PassThroughCookies>
+                <UseSSL>False</UseSSL>
             </CustomAuthenticationUI>
             ...
         </UI>
@@ -180,5 +241,5 @@ Copy the following dll's
 - RegionOrebroLan.ReportingServices.dll
 
 to:
-  - C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\bin
-  - C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\Portal
+1. C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\bin
+2. C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\Portal
