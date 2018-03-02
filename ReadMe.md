@@ -1,5 +1,37 @@
 # Reporting-Services-With-ADFS-Authentication
 
+
+
+
+## TEMPORARY REMINDER (WHERE YOU ARE FOR THE MOMENT)
+
+
+    <Configuration>
+        ...
+        <Extensions>
+            ...
+            <Authentication>
+                <Extension Name="Forms" Type="RegionOrebroLan.ReportingServices.Authentication.FederationAuthentication, RegionOrebroLan.ReportingServices">
+                    <Configuration>
+                        <CookieName>FedAuth</CookieName>
+                        <SigningCertificatePath></SigningCertificatePath>
+                    </Configuration>
+                </Extension>
+            </Authentication>
+            ...
+        </Extensions>
+        ...
+    </Configuration>
+
+
+
+
+
+
+
+
+
+
 ## Help/information about custom security for Reporting Services
 - [Configure Custom or Forms Authentication on the Report Server](https://docs.microsoft.com/en-us/sql/reporting-services/security/configure-custom-or-forms-authentication-on-the-report-server/)
 - https://github.com/Microsoft/Reporting-Services/tree/master/CustomSecuritySample/
