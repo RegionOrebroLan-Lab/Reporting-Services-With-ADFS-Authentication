@@ -241,7 +241,7 @@ Allow RegionOrebroLan-StrongName full trust by adding the following section as t
 								    PermissionSetName="FullTrust"
 								    version="1"
 							    >
-								    <IMembershipCondition class="StrongNameMembershipCondition" PublicKeyBlob="{RegionOrebroLan-StrongName}" version="1" />
+								    <IMembershipCondition class="StrongNameMembershipCondition" PublicKeyBlob="0024000004800000940000000602000000240000525341310004000001000100d5b5f1623c455dd2ce7a24fcb9ad5db0f32a8793bf2925b82d4b4d43ea1058f5cfd6b8136b8cb850715e921a0256ea4188cfc3b257021125f2cf36b3a584eb6caa674831da70eba16f154ae4ca0dc4cd29dc02d8422e5a72416aeb6bcda9b2e9c06f19df1edb5f5403677345c8f06f2612d571628ef43d2bf6d877c91c94e4d3" version="1" />
 							    </CodeGroup>
 							    <CodeGroup
 								    Name="StructureMap-StrongName"
@@ -280,6 +280,13 @@ The **PublicKeyBlob**-value depends on what strong-name-key-file you used to sig
 7. Save "GetPublicKey.cmd"
 8. Run the "GetPublicKey.cmd" file (double click it)
 9. Copy the displayed key and paste it, then remove any line breaks
+
+To get the public-key from an assembly:
+
+        @ECHO OFF
+        SET sn="C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\sn.exe"
+        %sn% -Tp "C:\Folder\Assembly.dll"
+        PAUSE
 
 ### 4 Web.config
 **Path:** *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\web.config**
