@@ -226,6 +226,15 @@ Allow RegionOrebroLan-StrongName full trust by adding the following section as t
 						    ...
 						    <CodeGroup class="FirstMatchCodeGroup" Description="This code group grants MyComputer code Execution permission. " PermissionSetName="Execution" version="1">
 							    <CodeGroup
+								    Name="Log4Net-StrongName"
+								    class="UnionCodeGroup"
+								    Description="This code group grants Log4Net code full trust."
+								    PermissionSetName="FullTrust"
+								    version="1"
+							    >
+								    <IMembershipCondition class="StrongNameMembershipCondition" PublicKeyBlob="0024000004800000940000000602000000240000525341310004000001000100297dcac908e28689360399027b0ea4cd852fbb74e1ed95e695a5ba55cbd1d075ec20cdb5fa6fc593d3d571527b20558d6f39e1f4d5cfe0798428c589c311965244b209c38a02aaa8c9da3b72405b6fedeeb4292c3457e9769b74e645c19cb06c2be75fb2d12281a585fbeabf7bd195d6961ba113286fc3e286d7bbd69024ceda" version="1" />
+							    </CodeGroup>
+							    <CodeGroup
 								    Name="RegionOrebroLan-StrongName"
 								    class="UnionCodeGroup"
 								    Description="This code group grants RegionOrebroLan code full trust."
@@ -233,6 +242,15 @@ Allow RegionOrebroLan-StrongName full trust by adding the following section as t
 								    version="1"
 							    >
 								    <IMembershipCondition class="StrongNameMembershipCondition" PublicKeyBlob="{RegionOrebroLan-StrongName}" version="1" />
+							    </CodeGroup>
+							    <CodeGroup
+								    Name="StructureMap-StrongName"
+								    class="UnionCodeGroup"
+								    Description="This code group grants StructureMap code full trust."
+								    PermissionSetName="FullTrust"
+								    version="1"
+							    >
+								    <IMembershipCondition class="StrongNameMembershipCondition" PublicKeyBlob="00240000048000009400000006020000002400005253413100040000010001008d9a2a76e43cd9b1b1944b1f3b489a046b33f0bcd755b25cc5d3ed7b18ded38240d6db7578cd986c72d3feb4f94a7ab26fcfa41e3e4f41cf2c029fba91159db05c44d63f0b2bfac24353a07f4a1230dd3d4240340adafa2275277fa083c75958062cd0e60016701db6af7ae718efdf1e802a840595b49c290964255b3c60c494" version="1" />
 							    </CodeGroup>
 							    ...
 						    </CodeGroup>
