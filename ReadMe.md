@@ -1,51 +1,28 @@
 # Reporting-Services-With-ADFS-Authentication
 
-
-
-
-## TEMPORARY REMINDER (WHERE YOU ARE FOR THE MOMENT)
-
-
-    <Configuration>
-        ...
-        <Extensions>
-            ...
-            <Authentication>
-                <Extension Name="Forms" Type="RegionOrebroLan.ReportingServices.Authentication.FederationAuthentication, RegionOrebroLan.ReportingServices">
-                    <Configuration>
-                        <CookieName>FedAuth</CookieName>
-                        <SigningCertificatePath></SigningCertificatePath>
-                    </Configuration>
-                </Extension>
-            </Authentication>
-            ...
-        </Extensions>
-        ...
-    </Configuration>
-
-
-
-
-
-
-
-
-
-
 ## Help/information about custom security for Reporting Services
 - [Configure Custom or Forms Authentication on the Report Server](https://docs.microsoft.com/en-us/sql/reporting-services/security/configure-custom-or-forms-authentication-on-the-report-server/)
 - https://github.com/Microsoft/Reporting-Services/tree/master/CustomSecuritySample/
 - [How to install custom security extensions](https://docs.microsoft.com/en-us/sql/reporting-services/extensions/security-extension/how-to-install-custom-security-extensions/)
+
+## Environment writing this documentation
+
+- ADFS-url: https://adfs.local.net/adfs/ls/
+- Reporting-Services urls: https://reports.local.net/ReportServer/, https://reports.local.net/Reports/
 
 ## Custom assemblies used
 
 - **RegionOrebroLan.IdentityModel.dll**: https://github.com/RegionOrebroLan/.NET-IdentityModel-Extensions
 - **RegionOrebroLan.ReportingServices.dll**: https://github.com/RegionOrebroLan/.NET-ReportingServices-Extensions
 
+[Read-more](#3-rssrvpolicyconfig)
+
+
+
 ## Deployment and configuration
 
 ### 1 Windows Identity Foundation 3.5
-In **RegionOrebroLan.IdentityModel.dll** SAML-tokens are converted to a "impersonatable" WindowsIdentity. To be able to create an "impersonatable" WindowsIdentity from a user-principal-name, by calling:
+In **RegionOrebroLan.IdentityModel.dll** SAML-tokens are converted to an "impersonatable" WindowsIdentity. To be able to create an "impersonatable" WindowsIdentity from a user-principal-name, by calling:
 
     Microsoft.IdentityModel.WindowsTokenService.S4UClient.UpnLogon("firstname.lastname@company.com");
 
@@ -140,46 +117,17 @@ to
         <Extensions>
             ...
             <Authentication>
-                <Extension Name="Forms" Type="RegionOrebroLan.ReportingServices.Authentication.FederationAuthentication, RegionOrebroLan.ReportingServices" />
+                <Extension Name="Windows" Type="RegionOrebroLan.ReportingServices.Authentication.WindowsAuthentication, RegionOrebroLan.ReportingServices" />
             </Authentication>
             ...
         </Extensions>
         ...
     </Configuration>
 
-#### 2.4 /Configuration/Extensions/Security
-Change from
-
-    <Configuration>
-        ...
-        <Extensions>
-            ...
-            <Security>
-                <Extension Name="Windows" Type="Microsoft.ReportingServices.Authorization.WindowsAuthorization, Microsoft.ReportingServices.Authorization" />
-            </Security>
-            ...
-        </Extensions>
-        ...
-    </Configuration>
-
-to
-
-    <Configuration>
-        ...
-        <Extensions>
-            ...
-            <Security>
-                <Extension Name="Forms" Type="Microsoft.ReportingServices.Authorization.WindowsAuthorization, Microsoft.ReportingServices.Authorization" />
-            </Security>
-            ...
-        </Extensions>
-        ...
-    </Configuration>
-
-#### 2.5 /Configuration/UI (cookies to pass through)
+#### 2.4 /Configuration/UI (cookies to pass through)
 Add the following as the first child to /Configuration/UI:
 
-##### 2.5.1 Production-environment (SSL)
+##### 2.4.1 Production-environment (SSL)
 
     <Configuration>
         ...
@@ -195,7 +143,7 @@ Add the following as the first child to /Configuration/UI:
         ...
     </Configuration>
 
-##### 2.5.2 Development-environment (if you are not using SSL)
+##### 2.4.2 Development-environment (if you are not using SSL)
 
     <Configuration>
         ...
