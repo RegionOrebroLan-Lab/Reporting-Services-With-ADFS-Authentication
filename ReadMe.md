@@ -191,7 +191,9 @@ Add the following as the first child to /Configuration/UI:
     </Configuration>
 
 ### 5 RSSrvPolicy.config
-**Path:** *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\rssrvpolicy.config*
+**Path:**
+- Reporting Services: *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\rssrvpolicy.config*
+- Power BI Report Server: *C:\Program Files\Microsoft Power BI Report Server\PBIRS\ReportServer\rssrvpolicy.config*
 
 Allow RegionOrebroLan-StrongName full trust by adding the following section as the first element under the nested code-group with class "FirstMatchCodeGroup":
 
@@ -267,7 +269,88 @@ To get the public-key from an assembly:
         PAUSE
 
 ### 6 Web.config
-**Path:** *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\web.config**
+**Path:**
+- Reporting Services: *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\web.config*
+- Power BI Report Server: *C:\Program Files\Microsoft Power BI Report Server\PBIRS\ReportServer\web.config*
+
+        <?xml version="1.0" encoding="utf-8"?>
+        <configuration>
+            ...
+            <configSections>
+                <section name="structureMap" type="RegionOrebroLan.ReportingServices.StructureMap.Configuration.Section, RegionOrebroLan.ReportingServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
+                <section name="system.identityModel" type="System.IdentityModel.Configuration.SystemIdentityModelSection, System.IdentityModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+                <section name="system.identityModel.services" type="System.IdentityModel.Services.Configuration.SystemIdentityModelServicesSection, System.IdentityModel.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+            </configSections>
+            ...
+            <runtime>
+                ...
+                <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+                    ...
+                    <dependentAssembly>
+                        <assemblyIdentity name="StructureMap" culture="neutral" publicKeyToken="e60ad81abae3c223" />
+                        <bindingRedirect newVersion="3.1.9.463" oldVersion="0.0.0.0-3.1.9.463" />
+                    </dependentAssembly>
+                    ...
+                </assemblyBinding>
+                ...
+            </runtime>
+            ...
+            <structureMap>
+                <registries>
+                    <add type="RegionOrebroLan.ReportingServices.StructureMap.Registry, RegionOrebroLan.ReportingServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
+                </registries>
+            </structureMap>
+            ...
+            <system.identityModel>
+                <identityConfiguration>
+                    <audienceUris>
+                        <add value="https://reports.local.net/ReportServer/" />
+                    </audienceUris>
+                    <certificateValidation certificateValidationMode="PeerOrChainTrust" />
+                    <issuerNameRegistry type="System.IdentityModel.Tokens.ConfigurationBasedIssuerNameRegistry, System.IdentityModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+                        <trustedIssuers>
+                            <add name="https://adfs.local.net/adfs/services/trust/" thumbprint="ef3d1322792e8d32f4f20c921bdf259e069bf567" />
+                        </trustedIssuers>
+                    </issuerNameRegistry>
+                    <securityTokenHandlers>
+                        <remove type="System.IdentityModel.Tokens.SamlSecurityTokenHandler, System.IdentityModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+                        <add type="RegionOrebroLan.IdentityModel.Tokens.SamlImpersonatableSecurityTokenHandler, RegionOrebroLan.IdentityModel, Version=1.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead">
+                            <samlSecurityTokenRequirement issuerCertificateRevocationMode="Online" issuerCertificateTrustedStoreLocation="LocalMachine" issuerCertificateValidationMode="PeerOrChainTrust" mapToWindows="true">
+                                <nameClaimType value="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name" />
+                                <roleClaimType value="schemas.microsoft.com/ws/2006/04/identity/claims/role" />
+                            </samlSecurityTokenRequirement>
+                        </add>
+                    </securityTokenHandlers>
+                </identityConfiguration>
+            </system.identityModel>
+            ...
+            <system.identityModel.services>
+                <federationConfiguration>
+                    <cookieHandler requireSsl="true" />
+                    <wsFederation issuer="https://adfs.local.net/adfs/ls/" passiveRedirectEnabled="true" realm="https://reports.local.net/ReportServer/" requireHttps="true" />
+                </federationConfiguration>
+            </system.identityModel.services>
+            ...
+            <system.web>
+                ...
+                <authorization>
+                    <deny users="?" />
+                </authorization>
+                ,,,
+                <httpModules>
+                    <clear />
+                    <add name="BootstrapperModule" type="RegionOrebroLan.ReportingServices.Web.BootstrapperModule, RegionOrebroLan.ReportingServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
+                    <add name="CustomErrorHandlerModule" type="RegionOrebroLan.ReportingServices.Web.ErrorHandlerModule, RegionOrebroLan.ReportingServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
+                    <add name="ErrorHandlerModule" type="System.Web.Mobile.ErrorHandlerModule, System.Web.Mobile, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+                    <add name="OutputCache" type="System.Web.Caching.OutputCacheModule" />
+                    <add name="SessionAuthenticationModule" type="System.IdentityModel.Services.SessionAuthenticationModule, System.IdentityModel.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+                    <!-- Must be declared after the SessionAuthenticationModule. -->
+                    <add name="FederationAuthenticationModule" type="RegionOrebroLan.ReportingServices.Web.FederationAuthenticationModule, RegionOrebroLan.ReportingServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
+                </httpModules>
+                ...
+            </system.web>
+            ...
+        </configuration>
 
 ### 7 Deploy assemblies
 Copy the following dll's
