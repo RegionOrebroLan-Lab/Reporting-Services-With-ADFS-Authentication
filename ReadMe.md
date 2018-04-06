@@ -1,27 +1,55 @@
 # Reporting-Services-With-ADFS-Authentication
 
+This is a guide to set up Reporting Services with ADFS authentication. This guide applies to [Microsoft SQL Server 2017 Reporting Services](https://www.microsoft.com/download/details.aspx?id=55252).
+
 ## Help/information about custom security for Reporting Services
 - [Configure Custom or Forms Authentication on the Report Server](https://docs.microsoft.com/en-us/sql/reporting-services/security/configure-custom-or-forms-authentication-on-the-report-server/)
 - https://github.com/Microsoft/Reporting-Services/tree/master/CustomSecuritySample/
 - [How to install custom security extensions](https://docs.microsoft.com/en-us/sql/reporting-services/extensions/security-extension/how-to-install-custom-security-extensions/)
 
-## Environment writing this documentation
-
+## Environment writing this guide
 - ADFS-url: https://adfs.local.net/adfs/ls/
 - Reporting-Services urls: https://reports.local.net/ReportServer/, https://reports.local.net/Reports/
 
-## Custom assemblies used
+**Important!** The trailing slash in https://reports.local.net/ReportServer/ is important when configuring **AD FS** and in **Web.config**.
 
+## Custom assemblies used
 - **RegionOrebroLan.IdentityModel.dll**: https://github.com/RegionOrebroLan/.NET-IdentityModel-Extensions
 - **RegionOrebroLan.ReportingServices.dll**: https://github.com/RegionOrebroLan/.NET-ReportingServices-Extensions
 
-[Read-more](#3-rssrvpolicyconfig)
-
-
-
 ## Deployment and configuration
 
-### 1 Windows Identity Foundation 3.5
+### 1 Ensure Reporting Services with SSL ís setup
+Either **Reporting Services** or **Power BI Report Server**. **Power BI Report Server** is actually **Reporting Services**.
+
+#### 1.1 Reporting Services
+- [Install SQL Server Reporting Services (2017 and later)](https://docs.microsoft.com/en-us/sql/reporting-services/install-windows/install-reporting-services/)
+- [Configure SSL Connections on a Native Mode Report Server](https://docs.microsoft.com/en-us/sql/reporting-services/security/configure-ssl-connections-on-a-native-mode-report-server/)
+
+or
+
+#### 1.2 Power BI Report Server
+- [Quickstart: Install Power BI Report Server](https://docs.microsoft.com/en-US/power-bi/report-server/quickstart-install-report-server/)
+- [Configure SSL Connections on a Native Mode Report Server](https://docs.microsoft.com/en-us/sql/reporting-services/security/configure-ssl-connections-on-a-native-mode-report-server/)
+
+### 2 Ensure Reporting Services has access to ADFS
+1. On the **AD FS** server, open **AD FS Management**
+2. Select **Add Relying Party Trust...**
+3. **Claims aware**
+4. **Enter data about the relying party manually**
+5. Enter a **Display name**
+6. Skip optional token encryption certificate if you want
+7. **Enable support for the WS-Federation Passive protocol** and enter https://reports.local.net/ReportServer/ as **Relying party WS-Federation Passive protocol URL**
+8. Skip additional relying party trust identifiers
+9. Permit everyone
+10. Add claims issuance policy
+11. Add rule
+12. Send LDAP Attributes as Claims
+13. Claim rule  name: *LDAP-attributes*
+14. Attribute store: *Active Directory*
+15. Mappings: *User-Principal-Name* -> *UPN*
+
+### 3 Windows Identity Foundation 3.5
 In **RegionOrebroLan.IdentityModel.dll** SAML-tokens are converted to an "impersonatable" WindowsIdentity. To be able to create an "impersonatable" WindowsIdentity from a user-principal-name, by calling:
 
     Microsoft.IdentityModel.WindowsTokenService.S4UClient.UpnLogon("firstname.lastname@company.com");
@@ -52,10 +80,12 @@ you need to configure the **Claims to Windows Token Service** (windows-service).
 
 Then restart the windows-service **Claims to Windows Token Service**.
 
-### 2 RSReportServer.config
-**Path:** *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\rsreportserver.config*
+### 4 RSReportServer.config
+**Path:**
+- Reporting Services: *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\rsreportserver.config*
+- Power BI Report Server: *C:\Program Files\Microsoft Power BI Report Server\PBIRS\ReportServer\rsreportserver.config*
 
-#### 2.1 /Configuration (machine-keys)
+#### 4.1 /Configuration (machine-keys)
 Howto generate a machine-key with IIS: [Easiest way to generate MachineKey](https://blogs.msdn.microsoft.com/amb/2012/07/31/easiest-way-to-generate-machinekey/)
 
 Add the following child to /Configuration:
@@ -68,7 +98,7 @@ Add the following child to /Configuration:
 
 **The casing of the attributes is important!**
 
-#### 2.2 /Configuration/Authentication/AuthenticationTypes
+#### 4.2 /Configuration/Authentication/AuthenticationTypes
 Change from
 
     <Configuration>
@@ -95,7 +125,7 @@ to
 	    ...
     </Configuration>
 
-#### 2.3 /Configuration/Extensions/Authentication
+#### 4.3 /Configuration/Extensions/Authentication
 Change from
 
     <Configuration>
@@ -124,10 +154,10 @@ to
         ...
     </Configuration>
 
-#### 2.4 /Configuration/UI (cookies to pass through)
+#### 4.4 /Configuration/UI (cookies to pass through)
 Add the following as the first child to /Configuration/UI:
 
-##### 2.4.1 Production-environment (SSL)
+##### 4.4.1 Production-environment (SSL)
 
     <Configuration>
         ...
@@ -143,7 +173,7 @@ Add the following as the first child to /Configuration/UI:
         ...
     </Configuration>
 
-##### 2.4.2 Development-environment (if you are not using SSL)
+##### 4.4.2 Development-environment (if you are not using SSL)
 
     <Configuration>
         ...
@@ -160,7 +190,7 @@ Add the following as the first child to /Configuration/UI:
         ...
     </Configuration>
 
-### 3 RSSrvPolicy.config
+### 5 RSSrvPolicy.config
 **Path:** *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\rssrvpolicy.config*
 
 Allow RegionOrebroLan-StrongName full trust by adding the following section as the first element under the nested code-group with class "FirstMatchCodeGroup":
@@ -236,10 +266,10 @@ To get the public-key from an assembly:
         %sn% -Tp "C:\Folder\Assembly.dll"
         PAUSE
 
-### 4 Web.config
+### 6 Web.config
 **Path:** *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\web.config**
 
-### 5 Deploy assemblies
+### 7 Deploy assemblies
 Copy the following dll's
 - Microsoft.IdentityModel.dll
 - RegionOrebroLan.IdentityModel.dll
@@ -248,3 +278,20 @@ Copy the following dll's
 to:
 1. C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\bin
 2. C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\Portal
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+TEMPORARY
+[Read-more](#4-rssrvpolicyconfig)
