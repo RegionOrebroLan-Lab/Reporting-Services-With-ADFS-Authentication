@@ -10,10 +10,12 @@ This is a guide to set up Reporting Services with ADFS authentication. This guid
 ## Environment
 This guide is written using the following environment:
 - **ADFS**-url: https://adfs.local.net/adfs/ls/
-- **Reporting Services** urls: https://reports.local.net/ReportServer/, https://reports.local.net/Reports/
+- **Reporting Services** urls:
+  - https://reports.local.net/ReportServer/
+  - https://reports.local.net/Reports/
 - Installation path (default):
-    - **SQL Server Reporting Services**: *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS*
-    - **Power BI Report Server**: *C:\Program Files\Microsoft Power BI Report Server\PBIRS*
+  - **SQL Server Reporting Services**: *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS*
+  - **Power BI Report Server**: *C:\Program Files\Microsoft Power BI Report Server\PBIRS*
 
 **Important!** The trailing slash in https://reports.local.net/ReportServer/ is important when configuring **AD FS** and in **Web.config**.
 
