@@ -1,15 +1,19 @@
 # Reporting-Services-With-ADFS-Authentication
 
-This is a guide to set up Reporting Services with ADFS authentication. This guide applies to [Microsoft SQL Server 2017 Reporting Services](https://www.microsoft.com/download/details.aspx?id=55252).
+This is a guide to set up Reporting Services with ADFS authentication. This guide applies to [Microsoft SQL Server 2017 Reporting Services](https://www.microsoft.com/download/details.aspx?id=55252) or [Power BI Report Server](https://www.microsoft.com/en-us/download/details.aspx?id=56722).
 
 ## Help/information about custom security for Reporting Services
 - [Configure Custom or Forms Authentication on the Report Server](https://docs.microsoft.com/en-us/sql/reporting-services/security/configure-custom-or-forms-authentication-on-the-report-server/)
 - https://github.com/Microsoft/Reporting-Services/tree/master/CustomSecuritySample/
 - [How to install custom security extensions](https://docs.microsoft.com/en-us/sql/reporting-services/extensions/security-extension/how-to-install-custom-security-extensions/)
 
-## Environment writing this guide
-- ADFS-url: https://adfs.local.net/adfs/ls/
-- Reporting-Services urls: https://reports.local.net/ReportServer/, https://reports.local.net/Reports/
+## Environment
+This guide is written using the following environment:
+- **ADFS**-url: https://adfs.local.net/adfs/ls/
+- **Reporting Services** urls: https://reports.local.net/ReportServer/, https://reports.local.net/Reports/
+- Installation path (default):
+    - **SQL Server Reporting Services**: *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS*
+    - **Power BI Report Server**: *C:\Program Files\Microsoft Power BI Report Server\PBIRS*
 
 **Important!** The trailing slash in https://reports.local.net/ReportServer/ is important when configuring **AD FS** and in **Web.config**.
 
@@ -20,13 +24,11 @@ This is a guide to set up Reporting Services with ADFS authentication. This guid
 ## Deployment and configuration
 
 ### 1 Ensure Reporting Services with SSL ís setup
-Either **Reporting Services** or **Power BI Report Server**. **Power BI Report Server** is actually **Reporting Services**.
+Either **SQL Server Reporting Services** or **Power BI Report Server**.
 
-#### 1.1 Reporting Services
+#### 1.1 SQL Server Reporting Services
 - [Install SQL Server Reporting Services (2017 and later)](https://docs.microsoft.com/en-us/sql/reporting-services/install-windows/install-reporting-services/)
 - [Configure SSL Connections on a Native Mode Report Server](https://docs.microsoft.com/en-us/sql/reporting-services/security/configure-ssl-connections-on-a-native-mode-report-server/)
-
-or
 
 #### 1.2 Power BI Report Server
 - [Quickstart: Install Power BI Report Server](https://docs.microsoft.com/en-US/power-bi/report-server/quickstart-install-report-server/)
@@ -81,9 +83,7 @@ you need to configure the **Claims to Windows Token Service** (windows-service).
 Then restart the windows-service **Claims to Windows Token Service**.
 
 ### 4 RSReportServer.config
-**Path:**
-- Reporting Services: *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\rsreportserver.config*
-- Power BI Report Server: *C:\Program Files\Microsoft Power BI Report Server\PBIRS\ReportServer\rsreportserver.config*
+**Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\rsreportserver.config
 
 #### 4.1 /Configuration (machine-keys)
 Howto generate a machine-key with IIS: [Easiest way to generate MachineKey](https://blogs.msdn.microsoft.com/amb/2012/07/31/easiest-way-to-generate-machinekey/)
@@ -191,9 +191,7 @@ Add the following as the first child to /Configuration/UI:
     </Configuration>
 
 ### 5 RSSrvPolicy.config
-**Path:**
-- Reporting Services: *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\rssrvpolicy.config*
-- Power BI Report Server: *C:\Program Files\Microsoft Power BI Report Server\PBIRS\ReportServer\rssrvpolicy.config*
+**Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\rssrvpolicy.config
 
 Allow RegionOrebroLan-StrongName full trust by adding the following section as the first element under the nested code-group with class "FirstMatchCodeGroup":
 
@@ -269,9 +267,7 @@ To get the public-key from an assembly:
         PAUSE
 
 ### 6 Web.config
-**Path:**
-- Reporting Services: *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\web.config*
-- Power BI Report Server: *C:\Program Files\Microsoft Power BI Report Server\PBIRS\ReportServer\web.config*
+**Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\web.config
 
         <?xml version="1.0" encoding="utf-8"?>
         <configuration>
@@ -359,8 +355,8 @@ Copy the following dll's
 - RegionOrebroLan.ReportingServices.dll
 
 to:
-1. C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\ReportServer\bin
-2. C:\Program Files\Microsoft SQL Server Reporting Services\SSRS\Portal
+1. [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin
+2. [\[INSTALLATION-PATH\]](#environment)\Portal
 
 
 
