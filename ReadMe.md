@@ -84,10 +84,15 @@ you need to configure the **Claims to Windows Token Service** (windows-service).
 
 Then restart the windows-service **Claims to Windows Token Service**.
 
-### 4 RSReportServer.config
+### 4 Stop the service
+Stop the windows service:
+- **SQL Server Reporting Services (MSSQLSERVER)**, if running SQL Server Reporting Services
+- **Power BI Report Server**, if running Power BI Report Server
+
+### 5 RSReportServer.config
 **Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\rsreportserver.config
 
-#### 4.1 /Configuration (machine-keys)
+#### 5.1 /Configuration (machine-keys)
 Howto generate a machine-key with IIS: [Easiest way to generate MachineKey](https://blogs.msdn.microsoft.com/amb/2012/07/31/easiest-way-to-generate-machinekey/)
 
 Add the following child to /Configuration:
@@ -100,7 +105,7 @@ Add the following child to /Configuration:
 
 **The casing of the attributes is important!**
 
-#### 4.2 /Configuration/Authentication/AuthenticationTypes
+#### 5.2 /Configuration/Authentication/AuthenticationTypes
 Change from
 
     <Configuration>
@@ -127,7 +132,7 @@ to
 	    ...
     </Configuration>
 
-#### 4.3 /Configuration/Extensions/Authentication
+#### 5.3 /Configuration/Extensions/Authentication
 Change from
 
     <Configuration>
@@ -156,10 +161,10 @@ to
         ...
     </Configuration>
 
-#### 4.4 /Configuration/UI (cookies to pass through)
+#### 5.4 /Configuration/UI (cookies to pass through)
 Add the following as the first child to /Configuration/UI:
 
-##### 4.4.1 Production-environment (SSL)
+##### 5.4.1 Production-environment (SSL)
 
     <Configuration>
         ...
@@ -175,7 +180,7 @@ Add the following as the first child to /Configuration/UI:
         ...
     </Configuration>
 
-##### 4.4.2 Development-environment (if you are not using SSL)
+##### 5.4.2 Development-environment (if you are not using SSL)
 
     <Configuration>
         ...
@@ -192,7 +197,7 @@ Add the following as the first child to /Configuration/UI:
         ...
     </Configuration>
 
-### 5 RSSrvPolicy.config
+### 6 RSSrvPolicy.config
 **Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\rssrvpolicy.config
 
 Allow RegionOrebroLan-StrongName full trust by adding the following section as the first element under the nested code-group with class "FirstMatchCodeGroup":
@@ -268,7 +273,7 @@ To get the public-key from an assembly:
         %sn% -Tp "C:\Folder\Assembly.dll"
         PAUSE
 
-### 6 Web.config
+### 7 Web.config
 **Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\web.config
 
         <?xml version="1.0" encoding="utf-8"?>
@@ -350,7 +355,7 @@ To get the public-key from an assembly:
             ...
         </configuration>
 
-### 7 Deploy assemblies
+### 8 Deploy files
 Copy the following dll's
 - Microsoft.IdentityModel.dll
 - RegionOrebroLan.IdentityModel.dll
@@ -360,19 +365,7 @@ to:
 1. [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin
 2. [\[INSTALLATION-PATH\]](#environment)\Portal
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-TEMPORARY
-[Read-more](#4-rssrvpolicyconfig)
+### 9 Start the service
+Start the windows service:
+- **SQL Server Reporting Services (MSSQLSERVER)**, if running SQL Server Reporting Services
+- **Power BI Report Server**, if running Power BI Report Server
