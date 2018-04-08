@@ -284,7 +284,6 @@ To get the public-key from an assembly:
 ### 7 Web.config
 **Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\web.config
 
-        <?xml version="1.0" encoding="utf-8"?>
         <configuration>
             ...
             <configSections>
