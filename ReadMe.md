@@ -284,19 +284,71 @@ To get the public-key from an assembly:
         %sn% -Tp "C:\Folder\Assembly.dll"
         PAUSE
 
-### 7 Web.config
+### 7 Deploy files
+Download the file [**Files.zip**](/Files.zip) and extract it. It has the following content:
+  - **14**
+    - RegionOrebroLan.ReportingServices.dll
+  - **15**
+    - RegionOrebroLan.ReportingServices.dll
+- log4net.config
+- log4net.dll
+- Microsoft.IdentityModel.dll
+- RegionOrebroLan.IdentityModel.dll
+- StructureMap.dll
+- StructureMap.Net4.dll
+
+If you download the files to the Reporting Services server directly they might be blocked and the assemblies will not be granted access. To resolve it you can right-click each downloaded file and choose properties. If it says: *This file came from another computer and might be blocked to help protect this computer.*, unblock it.
+
+Check the version of the following assembly:
+- [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin\Microsoft.ReportingServices.Interfaces.dll
+
+Depending on what you are running:
+- If you are running [Microsoft SQL Server 2017 Reporting Services](https://www.microsoft.com/download/details.aspx?id=55252) the version should be **14.0.600.594**
+- If you are running [Power BI Report Server](https://www.microsoft.com/en-us/download/details.aspx?id=56722) the version should be **15.0.1.130**
+
+#### 7.1 ReportServer
+Copy the following files to [\[INSTALLATION-PATH\]](#environment)\ReportServer:
+- log4net.config
+
+Copy the following files to [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin:
+- log4net.dll
+- Microsoft.IdentityModel.dll
+- RegionOrebroLan.IdentityModel.dll
+- **14**\RegionOrebroLan.ReportingServices.dll or **15**\RegionOrebroLan.ReportingServices.dll (depending on the version you are running)
+- StructureMap.dll
+- StructureMap.Net4.dll
+
+#### 7.2 Portal
+Copy the following files to [\[INSTALLATION-PATH\]](#environment)\Portal:
+- log4net.config
+- log4net.dll
+- Microsoft.IdentityModel.dll
+- **14**\RegionOrebroLan.ReportingServices.dll or **15**\RegionOrebroLan.ReportingServices.dll (depending on the version you are running)
+- StructureMap.dll
+- StructureMap.Net4.dll
+
+#### 7.3 PowerBI (if using Power BI Report Server)
+Copy the following files to [\[INSTALLATION-PATH\]](#environment)\PowerBI:
+- log4net.config
+- log4net.dll
+- Microsoft.IdentityModel.dll
+- **14**\RegionOrebroLan.ReportingServices.dll or **15**\RegionOrebroLan.ReportingServices.dll (depending on the version you are running)
+- StructureMap.dll
+- StructureMap.Net4.dll
+
+### 8 Web.config
 **Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\web.config
 
 To get the thumbprint value (/configuration/system.identityModel/identityConfiguration/issuerNameRegistry/trustedIssuers/add @thumbprint) run the following PowerShell-command on the ADFS-server:
 
     Write-Host (Get-AdfsCertificate -CertificateType "Token-Signing").Thumbprint.ToLower();
 
-Add the following parts to Web.config:
+Add the following parts to Web.config (change XX to 14 or 15 depending on version):
 
         <configuration>
             ...
             <configSections>
-                <section name="structureMap" type="RegionOrebroLan.ReportingServices.StructureMap.Configuration.Section, RegionOrebroLan.ReportingServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
+                <section name="structureMap" type="RegionOrebroLan.ReportingServices.StructureMap.Configuration.Section, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
                 <section name="system.identityModel" type="System.IdentityModel.Configuration.SystemIdentityModelSection, System.IdentityModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
                 <section name="system.identityModel.services" type="System.IdentityModel.Services.Configuration.SystemIdentityModelServicesSection, System.IdentityModel.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
             </configSections>
@@ -316,7 +368,7 @@ Add the following parts to Web.config:
             ...
             <structureMap>
                 <registries>
-                    <add type="RegionOrebroLan.ReportingServices.StructureMap.Registry, RegionOrebroLan.ReportingServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
+                    <add type="RegionOrebroLan.ReportingServices.StructureMap.Registry, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
                 </registries>
             </structureMap>
             ...
@@ -358,70 +410,18 @@ Add the following parts to Web.config:
                 ,,,
                 <httpModules>
                     <clear />
-                    <add name="BootstrapperModule" type="RegionOrebroLan.ReportingServices.Web.BootstrapperModule, RegionOrebroLan.ReportingServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
-                    <add name="CustomErrorHandlerModule" type="RegionOrebroLan.ReportingServices.Web.ErrorHandlerModule, RegionOrebroLan.ReportingServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
+                    <add name="BootstrapperModule" type="RegionOrebroLan.ReportingServices.Web.BootstrapperModule, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
+                    <add name="CustomErrorHandlerModule" type="RegionOrebroLan.ReportingServices.Web.ErrorHandlerModule, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
                     <add name="ErrorHandlerModule" type="System.Web.Mobile.ErrorHandlerModule, System.Web.Mobile, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
                     <add name="OutputCache" type="System.Web.Caching.OutputCacheModule" />
                     <add name="SessionAuthenticationModule" type="System.IdentityModel.Services.SessionAuthenticationModule, System.IdentityModel.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
                     <!-- Must be declared after the SessionAuthenticationModule. -->
-                    <add name="FederationAuthenticationModule" type="RegionOrebroLan.ReportingServices.Web.FederationAuthenticationModule, RegionOrebroLan.ReportingServices, Version=1.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
+                    <add name="FederationAuthenticationModule" type="RegionOrebroLan.ReportingServices.Web.FederationAuthenticationModule, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
                 </httpModules>
                 ...
             </system.web>
             ...
         </configuration>
-
-### 8 Deploy files
-Download the file [**Files.zip**](/Files.zip) and extract it. It has the following content:
-  - **14**
-    - RegionOrebroLan.ReportingServices.dll
-  - **15**
-    - RegionOrebroLan.ReportingServices.dll
-- log4net.config
-- log4net.dll
-- Microsoft.IdentityModel.dll
-- RegionOrebroLan.IdentityModel.dll
-- StructureMap.dll
-- StructureMap.Net4.dll
-
-If you download the files to the Reporting Services server directly they might be blocked and the assemblies will not be granted access. To resolve it you can right-click each downloaded file and choose properties. If it says: *This file came from another computer and might be blocked to help protect this computer.*, unblock it.
-
-Check the version of the following assembly:
-- [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin\Microsoft.ReportingServices.Interfaces.dll
-
-Depending on what you are running:
-- If you are running [Microsoft SQL Server 2017 Reporting Services](https://www.microsoft.com/download/details.aspx?id=55252) the version should be **14.0.600.594**
-- If you are running [Power BI Report Server](https://www.microsoft.com/en-us/download/details.aspx?id=56722) the version should be **15.0.1.130**
-
-#### 8.1 ReportServer
-Copy the following files to [\[INSTALLATION-PATH\]](#environment)\ReportServer:
-- log4net.config
-
-Copy the following files to [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin:
-- log4net.dll
-- Microsoft.IdentityModel.dll
-- RegionOrebroLan.IdentityModel.dll
-- **14**\RegionOrebroLan.ReportingServices.dll or **15**\RegionOrebroLan.ReportingServices.dll (depending on the version you are running)
-- StructureMap.dll
-- StructureMap.Net4.dll
-
-#### 8.2 Portal
-Copy the following files to [\[INSTALLATION-PATH\]](#environment)\Portal:
-- log4net.config
-- log4net.dll
-- Microsoft.IdentityModel.dll
-- **14**\RegionOrebroLan.ReportingServices.dll or **15**\RegionOrebroLan.ReportingServices.dll (depending on the version you are running)
-- StructureMap.dll
-- StructureMap.Net4.dll
-
-#### 8.2 PowerBI (if using Power BI Report Server)
-Copy the following files to [\[INSTALLATION-PATH\]](#environment)\PowerBI:
-- log4net.config
-- log4net.dll
-- Microsoft.IdentityModel.dll
-- **14**\RegionOrebroLan.ReportingServices.dll or **15**\RegionOrebroLan.ReportingServices.dll (depending on the version you are running)
-- StructureMap.dll
-- StructureMap.Net4.dll
 
 ### 9 Start the service
 Start the windows service:
