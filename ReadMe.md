@@ -58,9 +58,17 @@ In **RegionOrebroLan.IdentityModel.dll** SAML-tokens are converted to an "impers
 
     Microsoft.IdentityModel.WindowsTokenService.S4UClient.UpnLogon("firstname.lastname@company.com");
 
-you need to configure the **Claims to Windows Token Service** (windows-service). First you need to install the windows-feature **Windows Identity Foundation 3.5** on the computer. Then you have to allow the Reporting-Services-process-account access to run it by adding the account to **C:\Program Files\Windows Identity Foundation\v3.5\c2wtshost.exe.config**:
+you need to configure the **Claims to Windows Token Service** (windows-service). First you need to install the windows-feature **Windows Identity Foundation 3.5** on the computer. Then you have to allow the Reporting-Services-process-account access to run it by adding the account to **C:\Program Files\Windows Identity Foundation\v3.5\c2wtshost.exe.config**.
 
-    <?xml version="1.0"?>
+You find the Reporting-Services-process-account by looking at the **Log On**-tab at the windows service:
+- **SQL Server Reporting Services (MSSQLSERVER)**, if running SQL Server Reporting Services
+- **Power BI Report Server**, if running Power BI Report Server
+
+The default accounts are:
+- **NT Service\SQLServerReportingServices**
+- **NT SERVICE\PowerBIReportServer**
+
+        <?xml version="1.0"?>
         <configuration>
             <configSections>
                 <section name = "windowsTokenService" type="Microsoft.IdentityModel.WindowsTokenService.Configuration.WindowsTokenServiceSection, Microsoft.IdentityModel.WindowsTokenService, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
@@ -356,10 +364,17 @@ To get the public-key from an assembly:
         </configuration>
 
 ### 8 Deploy files
+Download the file [**Files.zip**](#Files.zip) and extract it. It has the following content:
+
+
 Copy the following dll's
+- log4net.config
+- log4net.dll
 - Microsoft.IdentityModel.dll
 - RegionOrebroLan.IdentityModel.dll
 - RegionOrebroLan.ReportingServices.dll
+- StructureMap.dll
+- StructureMap.Net4.dll
 
 to:
 1. [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin
