@@ -364,7 +364,7 @@ To get the public-key from an assembly:
         </configuration>
 
 ### 8 Deploy files
-Download the file [**Files.zip**](#Files.zip) and extract it. It has the following content:
+Download the file [**Files.zip**](/Files.zip) and extract it. It has the following content:
 - log4net.config
 - log4net.dll
 - Microsoft.IdentityModel.dll
