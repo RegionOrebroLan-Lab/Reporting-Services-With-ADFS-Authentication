@@ -365,9 +365,6 @@ To get the public-key from an assembly:
 
 ### 8 Deploy files
 Download the file [**Files.zip**](#Files.zip) and extract it. It has the following content:
-
-
-Copy the following dll's
 - log4net.config
 - log4net.dll
 - Microsoft.IdentityModel.dll
@@ -376,9 +373,35 @@ Copy the following dll's
 - StructureMap.dll
 - StructureMap.Net4.dll
 
-to:
-1. [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin
-2. [\[INSTALLATION-PATH\]](#environment)\Portal
+#### 8.1 ReportServer
+Copy the following files to [\[INSTALLATION-PATH\]](#environment)\ReportServer:
+- log4net.config
+
+Copy the following files to [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin:
+- log4net.dll
+- Microsoft.IdentityModel.dll
+- RegionOrebroLan.IdentityModel.dll
+- RegionOrebroLan.ReportingServices.dll
+- StructureMap.dll
+- StructureMap.Net4.dll
+
+#### 8.2 Portal
+Copy the following files to [\[INSTALLATION-PATH\]](#environment)\Portal:
+- log4net.config
+- log4net.dll
+- Microsoft.IdentityModel.dll
+- RegionOrebroLan.ReportingServices.dll
+- StructureMap.dll
+- StructureMap.Net4.dll
+
+#### 8.2 PowerBI (if using Power BI Report Server)
+Copy the following files to [\[INSTALLATION-PATH\]](#environment)\PowerBI:
+- log4net.config
+- log4net.dll
+- Microsoft.IdentityModel.dll
+- RegionOrebroLan.ReportingServices.dll
+- StructureMap.dll
+- StructureMap.Net4.dll
 
 ### 9 Start the service
 Start the windows service:
