@@ -336,6 +336,8 @@ Copy the following files to [\[INSTALLATION-PATH\]](#environment)\PowerBI:
 - StructureMap.dll
 - StructureMap.Net4.dll
 
+Copy [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin\Microsoft.ReportingServices.Authorization.dll to [\[INSTALLATION-PATH\]](#environment)\PowerBI.
+
 ### 8 Web.config
 **Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\web.config
 
