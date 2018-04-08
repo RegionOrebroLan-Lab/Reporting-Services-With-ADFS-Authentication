@@ -170,6 +170,11 @@ to
     </Configuration>
 
 #### 5.4 /Configuration/UI (cookies to pass through)
+According to the documentation you need to configure cookies to pass through:
+- [Configure the Web Portal to Pass Custom Authentication Cookies](https://docs.microsoft.com/en-us/sql/reporting-services/security/configure-the-web-portal-to-pass-custom-authentication-cookies/)
+
+Dont know if it is necessary setting up the solution in this guide but anyhow.
+
 Add the following as the first child to /Configuration/UI:
 
 ##### 5.4.1 Production-environment (SSL)
@@ -179,8 +184,7 @@ Add the following as the first child to /Configuration/UI:
         <UI>
             <CustomAuthenticationUI>
                 <PassThroughCookies>
-                    <PassThroughCookie>FedAuth</PassThroughCookie>
-                    <PassThroughCookie>FedAuth1</PassThroughCookie>
+                    <PassThroughCookie>.ASPXAUTH</PassThroughCookie>
                 </PassThroughCookies>
             </CustomAuthenticationUI>
             ...
@@ -195,8 +199,7 @@ Add the following as the first child to /Configuration/UI:
         <UI>
             <CustomAuthenticationUI>
                 <PassThroughCookies>
-                    <PassThroughCookie>FedAuth</PassThroughCookie>
-                    <PassThroughCookie>FedAuth1</PassThroughCookie>
+                    <PassThroughCookie>.ASPXAUTH</PassThroughCookie>
                 </PassThroughCookies>
                 <UseSSL>False</UseSSL>
             </CustomAuthenticationUI>
@@ -284,6 +287,12 @@ To get the public-key from an assembly:
 ### 7 Web.config
 **Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\web.config
 
+To get the thumbprint value (/configuration/system.identityModel/identityConfiguration/issuerNameRegistry/trustedIssuers/add @thumbprint) run the following PowerShell-command on the ADFS-server:
+
+    Write-Host (Get-AdfsCertificate -CertificateType "Token-Signing").Thumbprint.ToLower();
+
+Add the following parts to Web.config:
+
         <configuration>
             ...
             <configSections>
@@ -319,7 +328,7 @@ To get the public-key from an assembly:
                     <certificateValidation certificateValidationMode="PeerOrChainTrust" />
                     <issuerNameRegistry type="System.IdentityModel.Tokens.ConfigurationBasedIssuerNameRegistry, System.IdentityModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
                         <trustedIssuers>
-                            <add name="https://adfs.local.net/adfs/services/trust/" thumbprint="ef3d1322792e8d32f4f20c921bdf259e069bf567" />
+                            <add name="https://adfs.local.net/adfs/services/trust/" thumbprint="[THUMBPRINT-VALUE]" />
                         </trustedIssuers>
                     </issuerNameRegistry>
                     <securityTokenHandlers>
@@ -364,13 +373,25 @@ To get the public-key from an assembly:
 
 ### 8 Deploy files
 Download the file [**Files.zip**](/Files.zip) and extract it. It has the following content:
+  - **14**
+    - RegionOrebroLan.ReportingServices.dll
+  - **15**
+    - RegionOrebroLan.ReportingServices.dll
 - log4net.config
 - log4net.dll
 - Microsoft.IdentityModel.dll
 - RegionOrebroLan.IdentityModel.dll
-- RegionOrebroLan.ReportingServices.dll
 - StructureMap.dll
 - StructureMap.Net4.dll
+
+If you download the files to the Reporting Services server directly they might be blocked and the assemblies will not be granted access. To resolve it you can right-click each downloaded file and choose properties. If it says: *This file came from another computer and might be blocked to help protect this computer.*, unblock it.
+
+Check the version of the following assembly:
+- [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin\Microsoft.ReportingServices.Interfaces.dll
+
+Depending on what you are running:
+- If you are running [Microsoft SQL Server 2017 Reporting Services](https://www.microsoft.com/download/details.aspx?id=55252) the version should be **14.0.600.594**
+- If you are running [Power BI Report Server](https://www.microsoft.com/en-us/download/details.aspx?id=56722) the version should be **15.0.1.130**
 
 #### 8.1 ReportServer
 Copy the following files to [\[INSTALLATION-PATH\]](#environment)\ReportServer:
@@ -380,7 +401,7 @@ Copy the following files to [\[INSTALLATION-PATH\]](#environment)\ReportServer\b
 - log4net.dll
 - Microsoft.IdentityModel.dll
 - RegionOrebroLan.IdentityModel.dll
-- RegionOrebroLan.ReportingServices.dll
+- **14**\RegionOrebroLan.ReportingServices.dll or **15**\RegionOrebroLan.ReportingServices.dll (depending on the version you are running)
 - StructureMap.dll
 - StructureMap.Net4.dll
 
@@ -389,7 +410,7 @@ Copy the following files to [\[INSTALLATION-PATH\]](#environment)\Portal:
 - log4net.config
 - log4net.dll
 - Microsoft.IdentityModel.dll
-- RegionOrebroLan.ReportingServices.dll
+- **14**\RegionOrebroLan.ReportingServices.dll or **15**\RegionOrebroLan.ReportingServices.dll (depending on the version you are running)
 - StructureMap.dll
 - StructureMap.Net4.dll
 
@@ -398,7 +419,7 @@ Copy the following files to [\[INSTALLATION-PATH\]](#environment)\PowerBI:
 - log4net.config
 - log4net.dll
 - Microsoft.IdentityModel.dll
-- RegionOrebroLan.ReportingServices.dll
+- **14**\RegionOrebroLan.ReportingServices.dll or **15**\RegionOrebroLan.ReportingServices.dll (depending on the version you are running)
 - StructureMap.dll
 - StructureMap.Net4.dll
 
