@@ -130,11 +130,6 @@ to
     </Configuration>
 
 #### 4.4 /Configuration/UI (cookies to pass through)
-According to the documentation you need to configure cookies to pass through:
-- [Configure the Web Portal to Pass Custom Authentication Cookies](https://docs.microsoft.com/en-us/sql/reporting-services/security/configure-the-web-portal-to-pass-custom-authentication-cookies/)
-
-Dont know if it is necessary setting up the solution in this guide but anyhow.
-
 Add the following as the first child to /Configuration/UI:
 
 ##### 4.4.1 Production-environment (SSL)
@@ -145,6 +140,8 @@ Add the following as the first child to /Configuration/UI:
             <CustomAuthenticationUI>
                 <PassThroughCookies>
                     <PassThroughCookie>.ASPXAUTH</PassThroughCookie>
+                    <PassThroughCookie>FedAuth</PassThroughCookie>
+                    <PassThroughCookie>FedAuth1</PassThroughCookie>
                 </PassThroughCookies>
             </CustomAuthenticationUI>
             ...
@@ -160,6 +157,8 @@ Add the following as the first child to /Configuration/UI:
             <CustomAuthenticationUI>
                 <PassThroughCookies>
                     <PassThroughCookie>.ASPXAUTH</PassThroughCookie>
+                    <PassThroughCookie>FedAuth</PassThroughCookie>
+                    <PassThroughCookie>FedAuth1</PassThroughCookie>
                 </PassThroughCookies>
                 <UseSSL>False</UseSSL>
             </CustomAuthenticationUI>
