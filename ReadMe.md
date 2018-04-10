@@ -20,7 +20,6 @@ This guide is written using the following environment:
 **Important!** The trailing slash in https://reports.local.net/ReportServer/ is important when configuring **AD FS** and in **Web.config**.
 
 ## Custom assemblies used
-- **RegionOrebroLan.IdentityModel.dll**: https://github.com/RegionOrebroLan/.NET-IdentityModel-Extensions
 - **RegionOrebroLan.ReportingServices.dll**: https://github.com/RegionOrebroLan/.NET-ReportingServices-Extensions
 
 ## Deployment and configuration
@@ -53,54 +52,15 @@ Either **SQL Server Reporting Services** or **Power BI Report Server**.
 14. Attribute store: *Active Directory*
 15. Mappings: *User-Principal-Name* -> *UPN*
 
-### 3 Windows Identity Foundation 3.5
-In **RegionOrebroLan.IdentityModel.dll** SAML-tokens are converted to an "impersonatable" WindowsIdentity. To be able to create an "impersonatable" WindowsIdentity from a user-principal-name, by calling:
-
-    Microsoft.IdentityModel.WindowsTokenService.S4UClient.UpnLogon("firstname.lastname@company.com");
-
-you need to configure the **Claims to Windows Token Service** (windows-service). First you need to install the windows-feature **Windows Identity Foundation 3.5** on the computer. Then you have to allow the Reporting-Services-process-account access to run it by adding the account to **C:\Program Files\Windows Identity Foundation\v3.5\c2wtshost.exe.config**.
-
-You find the Reporting-Services-process-account by looking at the **Log On**-tab at the windows service:
-- **SQL Server Reporting Services (MSSQLSERVER)**, if running SQL Server Reporting Services
-- **Power BI Report Server**, if running Power BI Report Server
-
-The default accounts are:
-- **NT Service\SQLServerReportingServices**
-- **NT SERVICE\PowerBIReportServer**
-
-        <?xml version="1.0"?>
-        <configuration>
-            <configSections>
-                <section name = "windowsTokenService" type="Microsoft.IdentityModel.WindowsTokenService.Configuration.WindowsTokenServiceSection, Microsoft.IdentityModel.WindowsTokenService, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" />
-            </configSections>
-            <startup>
-                <supportedRuntime version="v2.0.50727" />
-                <supportedRuntime version="v4.0" />
-            </startup>
-            <windowsTokenService>
-                <!-- By default no callers are allowed to use the Windows Identity Foundation Claims To NT Token Service. Add the identities you wish to allow below. -->
-                <allowedCallers>
-                    <clear />
-                    <!-- <add value="NT AUTHORITY\Network Service" /> -->
-                    <!-- <add value="NT AUTHORITY\Local Service" /> -->
-                    <!-- <add value="NT AUTHORITY\System" /> -->
-                    <!-- <add value="NT AUTHORITY\Authenticated Users" /> -->
-                    <add value="NT Service\SQLServerReportingServices" />
-                </allowedCallers>
-            </windowsTokenService>
-        </configuration>
-
-Then restart the windows-service **Claims to Windows Token Service**.
-
-### 4 Stop the service
+### 3 Stop the service
 Stop the windows service:
 - **SQL Server Reporting Services (MSSQLSERVER)**, if running SQL Server Reporting Services
 - **Power BI Report Server**, if running Power BI Report Server
 
-### 5 RSReportServer.config
+### 4 RSReportServer.config
 **Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\rsreportserver.config
 
-#### 5.1 /Configuration (machine-keys)
+#### 4.1 /Configuration (machine-keys)
 Howto generate a machine-key with IIS: [Easiest way to generate MachineKey](https://blogs.msdn.microsoft.com/amb/2012/07/31/easiest-way-to-generate-machinekey/)
 
 Add the following child to /Configuration:
@@ -113,7 +73,7 @@ Add the following child to /Configuration:
 
 **The casing of the attributes is important!**
 
-#### 5.2 /Configuration/Authentication/AuthenticationTypes
+#### 4.2 /Configuration/Authentication/AuthenticationTypes
 Change from
 
     <Configuration>
@@ -140,7 +100,7 @@ to
 	    ...
     </Configuration>
 
-#### 5.3 /Configuration/Extensions/Authentication
+#### 4.3 /Configuration/Extensions/Authentication
 Change from
 
     <Configuration>
@@ -169,7 +129,7 @@ to
         ...
     </Configuration>
 
-#### 5.4 /Configuration/UI (cookies to pass through)
+#### 4.4 /Configuration/UI (cookies to pass through)
 According to the documentation you need to configure cookies to pass through:
 - [Configure the Web Portal to Pass Custom Authentication Cookies](https://docs.microsoft.com/en-us/sql/reporting-services/security/configure-the-web-portal-to-pass-custom-authentication-cookies/)
 
@@ -177,7 +137,7 @@ Dont know if it is necessary setting up the solution in this guide but anyhow.
 
 Add the following as the first child to /Configuration/UI:
 
-##### 5.4.1 Production-environment (SSL)
+##### 4.4.1 Production-environment (SSL)
 
     <Configuration>
         ...
@@ -192,7 +152,7 @@ Add the following as the first child to /Configuration/UI:
         ...
     </Configuration>
 
-##### 5.4.2 Development-environment (if you are not using SSL)
+##### 4.4.2 Development-environment (if you are not using SSL)
 
     <Configuration>
         ...
@@ -208,7 +168,7 @@ Add the following as the first child to /Configuration/UI:
         ...
     </Configuration>
 
-### 6 RSSrvPolicy.config
+### 5 RSSrvPolicy.config
 **Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\rssrvpolicy.config
 
 Allow RegionOrebroLan-StrongName full trust by adding the following section as the first element under the nested code-group with class "FirstMatchCodeGroup":
@@ -284,7 +244,7 @@ To get the public-key from an assembly:
         %sn% -Tp "C:\Folder\Assembly.dll"
         PAUSE
 
-### 7 Deploy files
+### 6 Deploy files
 Download the file [**Files.zip**](/Files.zip) and extract it. It has the following content:
   - **14**
     - RegionOrebroLan.ReportingServices.dll
@@ -292,8 +252,6 @@ Download the file [**Files.zip**](/Files.zip) and extract it. It has the followi
     - RegionOrebroLan.ReportingServices.dll
 - log4net.config
 - log4net.dll
-- Microsoft.IdentityModel.dll
-- RegionOrebroLan.IdentityModel.dll
 - StructureMap.dll
 - StructureMap.Net4.dll
 
@@ -306,39 +264,35 @@ Depending on what you are running:
 - If you are running [Microsoft SQL Server 2017 Reporting Services](https://www.microsoft.com/download/details.aspx?id=55252) the version should be **14.0.600.594**
 - If you are running [Power BI Report Server](https://www.microsoft.com/en-us/download/details.aspx?id=56722) the version should be **15.0.1.130**
 
-#### 7.1 ReportServer
+#### 6.1 ReportServer
 Copy the following files to [\[INSTALLATION-PATH\]](#environment)\ReportServer:
 - log4net.config
 
 Copy the following files to [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin:
 - log4net.dll
-- Microsoft.IdentityModel.dll
-- RegionOrebroLan.IdentityModel.dll
 - **14**\RegionOrebroLan.ReportingServices.dll or **15**\RegionOrebroLan.ReportingServices.dll (depending on the version you are running)
 - StructureMap.dll
 - StructureMap.Net4.dll
 
-#### 7.2 Portal
+#### 6.2 Portal
 Copy the following files to [\[INSTALLATION-PATH\]](#environment)\Portal:
 - log4net.config
 - log4net.dll
-- Microsoft.IdentityModel.dll
 - **14**\RegionOrebroLan.ReportingServices.dll or **15**\RegionOrebroLan.ReportingServices.dll (depending on the version you are running)
 - StructureMap.dll
 - StructureMap.Net4.dll
 
-#### 7.3 PowerBI (if using Power BI Report Server)
+#### 6.3 PowerBI (if using Power BI Report Server)
 Copy the following files to [\[INSTALLATION-PATH\]](#environment)\PowerBI:
 - log4net.config
 - log4net.dll
-- Microsoft.IdentityModel.dll
 - **14**\RegionOrebroLan.ReportingServices.dll or **15**\RegionOrebroLan.ReportingServices.dll (depending on the version you are running)
 - StructureMap.dll
 - StructureMap.Net4.dll
 
 Copy [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin\Microsoft.ReportingServices.Authorization.dll to [\[INSTALLATION-PATH\]](#environment)\PowerBI.
 
-### 8 Web.config
+### 7 Web.config
 **Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\web.config
 
 To get the thumbprint value (/configuration/system.identityModel/identityConfiguration/issuerNameRegistry/trustedIssuers/add @thumbprint) run the following PowerShell-command on the ADFS-server:
@@ -380,20 +334,12 @@ Add the following parts to Web.config (change XX to 14 or 15 depending on versio
                         <add value="https://reports.local.net/ReportServer/" />
                     </audienceUris>
                     <certificateValidation certificateValidationMode="PeerOrChainTrust" />
+                    <claimsAuthenticationManager type="RegionOrebroLan.ReportingServices.Security.Claims.WindowsFederationClaimsAuthenticationManager, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />    
                     <issuerNameRegistry type="System.IdentityModel.Tokens.ConfigurationBasedIssuerNameRegistry, System.IdentityModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
                         <trustedIssuers>
                             <add name="https://adfs.local.net/adfs/services/trust/" thumbprint="[THUMBPRINT-VALUE]" />
                         </trustedIssuers>
                     </issuerNameRegistry>
-                    <securityTokenHandlers>
-                        <remove type="System.IdentityModel.Tokens.SamlSecurityTokenHandler, System.IdentityModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-                        <add type="RegionOrebroLan.IdentityModel.Tokens.SamlImpersonatableSecurityTokenHandler, RegionOrebroLan.IdentityModel, Version=1.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead">
-                            <samlSecurityTokenRequirement issuerCertificateRevocationMode="Online" issuerCertificateTrustedStoreLocation="LocalMachine" issuerCertificateValidationMode="PeerOrChainTrust" mapToWindows="true">
-                                <nameClaimType value="http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name" />
-                                <roleClaimType value="schemas.microsoft.com/ws/2006/04/identity/claims/role" />
-                            </samlSecurityTokenRequirement>
-                        </add>
-                    </securityTokenHandlers>
                 </identityConfiguration>
             </system.identityModel>
             ...
@@ -421,11 +367,13 @@ Add the following parts to Web.config (change XX to 14 or 15 depending on versio
                     <add name="FederationAuthenticationModule" type="RegionOrebroLan.ReportingServices.Web.FederationAuthenticationModule, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
                 </httpModules>
                 ...
+                <identity impersonate="false" /><!-- Or remove the identity-element. -->
+                ...
             </system.web>
             ...
         </configuration>
 
-### 9 Start the service
+### 8 Start the service
 Start the windows service:
 - **SQL Server Reporting Services (MSSQLSERVER)**, if running SQL Server Reporting Services
 - **Power BI Report Server**, if running Power BI Report Server
