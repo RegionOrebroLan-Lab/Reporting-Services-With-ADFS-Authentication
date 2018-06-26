@@ -1,6 +1,24 @@
-# Reporting-Services-With-ADFS-Authentication
+# Reporting Services with ADFS-authentication
 
-This is a guide to set up Reporting Services with ADFS authentication. This guide applies to [Microsoft SQL Server 2017 Reporting Services](https://www.microsoft.com/download/details.aspx?id=55252) or [Power BI Report Server](https://www.microsoft.com/en-us/download/details.aspx?id=56722).
+# IMPORTANT!
+
+Support for **Microsoft SQL Server 2016 Reporting Services** does not work yet, see: https://github.com/RegionOrebroLan-Lab/.NET-ReportingServices-Extensions/issues/1/
+
+However, you should be able to install **Microsoft SQL Server 2017 Reporting Services** and configure it with your *SQL-Server-2016-Reporting-Services-databases*.
+
+Also - when this solution is considered stable this repository will move to https://github.com/RegionOrebroLan/.
+
+=======================================
+=======================================
+
+[**SSRS-13**]: https://social.technet.microsoft.com/wiki/contents/articles/50902.sql-server-2016-install-and-configure-ssrs.aspx
+[**SSRS-14**]: https://www.microsoft.com/download/details.aspx?id=55252
+[**PBIRS-15**]: https://www.microsoft.com/en-us/download/details.aspx?id=56722
+
+This is a guide to set up Reporting Services with ADFS-authentication. This guide applies to:
+- [**Microsoft SQL Server 2016 Reporting Services**](https://social.technet.microsoft.com/wiki/contents/articles/50902.sql-server-2016-install-and-configure-ssrs.aspx) - referenced as **SSRS-13** in this document
+- [**Microsoft SQL Server 2017 Reporting Services**](https://www.microsoft.com/download/details.aspx?id=55252) - referenced as **SSRS-14** in this document
+- [**Power BI Report Server**](https://www.microsoft.com/en-us/download/details.aspx?id=56722) - referenced as **PBIRS-15** in this document
 
 ## Help/information about custom security for Reporting Services
 - [Configure Custom or Forms Authentication on the Report Server](https://docs.microsoft.com/en-us/sql/reporting-services/security/configure-custom-or-forms-authentication-on-the-report-server/)
@@ -14,25 +32,44 @@ This guide is written using the following environment:
   - https://reports.local.net/ReportServer/
   - https://reports.local.net/Reports/
 - Installation path (default):
-  - **SQL Server Reporting Services**: *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS*
-  - **Power BI Report Server**: *C:\Program Files\Microsoft Power BI Report Server\PBIRS*
+  - [**SSRS-13**]: *C:\Program Files\Microsoft SQL Server\MSRS13.MSSQLSERVER\Reporting Services*
+  - [**SSRS-14**]: *C:\Program Files\Microsoft SQL Server Reporting Services\SSRS*
+  - [**PBIRS-15**]: *C:\Program Files\Microsoft Power BI Report Server\PBIRS*
 
 **Important!** The trailing slash in https://reports.local.net/ReportServer/ is important when configuring **AD FS** and in **Web.config**.
 
+To check your version you can check the version of the following assembly:
+- [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin\Microsoft.ReportingServices.Interfaces.dll
+
+To check the version of a *.dll:
+1. Right-click the *.dll
+2. Choose "Properties"
+3. Choose "Details"-tab
+4. Look at the property "File version"
+
+In the environment for this guide:
+- [**SSRS-13**] -> **13.0.5026.0**
+- [**SSRS-14**] -> **14.0.600.594**
+- [**PBIRS-15**] -> **15.0.1.130**
+
+Generally:
+- [**SSRS-13**] -> **13.X.X.X**
+- [**SSRS-14**] -> **14.X.X.X**
+- [**PBIRS-15**] -> **15.X.X.X**
+
 ## Custom assemblies used
-- **RegionOrebroLan.ReportingServices.dll**: https://github.com/RegionOrebroLan/.NET-ReportingServices-Extensions
+- **RegionOrebroLan.ReportingServices.dll**: https://github.com/RegionOrebroLan-Lab/.NET-ReportingServices-Extensions
 
 ## Deployment and configuration
 
-### 1 Ensure Reporting Services with SSL ís setup
-Either **SQL Server Reporting Services** or **Power BI Report Server**.
+### 1 Ensure Reporting Services with SSL is setup
 
-#### 1.1 SQL Server Reporting Services
-- [Install SQL Server Reporting Services (2017 and later)](https://docs.microsoft.com/en-us/sql/reporting-services/install-windows/install-reporting-services/)
-- [Configure SSL Connections on a Native Mode Report Server](https://docs.microsoft.com/en-us/sql/reporting-services/security/configure-ssl-connections-on-a-native-mode-report-server/)
+#### 1.1 Installation
+- **SSRS-13** - [SQL Server 2016: Install and Configure SSRS](https://social.technet.microsoft.com/wiki/contents/articles/50902.sql-server-2016-install-and-configure-ssrs.aspx)
+- **SSRS-14** - [Install SQL Server Reporting Services (2017 and later)](https://docs.microsoft.com/en-us/sql/reporting-services/install-windows/install-reporting-services/)
+- **PBIRS-15** - [Install Power BI Report Server](https://docs.microsoft.com/en-us/power-bi/report-server/install-report-server/)
 
-#### 1.2 Power BI Report Server
-- [Quickstart: Install Power BI Report Server](https://docs.microsoft.com/en-US/power-bi/report-server/quickstart-install-report-server/)
+#### 1.2 SSL
 - [Configure SSL Connections on a Native Mode Report Server](https://docs.microsoft.com/en-us/sql/reporting-services/security/configure-ssl-connections-on-a-native-mode-report-server/)
 
 ### 2 Ensure Reporting Services has access to ADFS
@@ -54,14 +91,44 @@ Either **SQL Server Reporting Services** or **Power BI Report Server**.
 
 ### 3 Stop the service
 Stop the windows service:
-- **SQL Server Reporting Services (MSSQLSERVER)**, if running SQL Server Reporting Services
-- **Power BI Report Server**, if running Power BI Report Server
+- [**SSRS-13**] & [**SSRS-14**]: **SQL Server Reporting Services (MSSQLSERVER)**
+- [**PBIRS-15**]: **Power BI Report Server**
 
-### 4 RSReportServer.config
-**Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\rsreportserver.config
-
-#### 4.1 /Configuration (machine-keys)
+### 4 Machine-keys
 Howto generate a machine-key with IIS: [Easiest way to generate MachineKey](https://blogs.msdn.microsoft.com/amb/2012/07/31/easiest-way-to-generate-machinekey/)
+
+#### 4.1 [**SSRS-13**]
+
+##### 4.1.1 Web.config
+**Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\web.config
+
+Add the following:
+
+    <configuration>
+        ...
+        <system.web>
+            ...
+            <machineKey decryption="AES" decryptionKey="[YOUR-DECRYPTION-KEY]" validation="AES" validationKey="[YOUR-VALIDATION-KEY]" />
+            ...
+        </system.web>
+        ...
+    </configuration>
+
+##### 4.1.2 Microsoft.ReportingServices.Portal.WebHost.exe.config
+**Path:** [\[INSTALLATION-PATH\]](#environment)\RSWebApp\Microsoft.ReportingServices.Portal.WebHost.exe.config
+
+Add the following:
+
+    <configuration>
+        ...
+        <system.web>
+            <machineKey decryption="AES" decryptionKey="[YOUR-DECRYPTION-KEY]" validation="AES" validationKey="[YOUR-VALIDATION-KEY]" />
+        </system.web>
+        ...
+    </configuration>
+
+#### 4.2 [**SSRS-14**] & [**PBIRS-15**]
+**Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\rsreportserver.config
 
 Add the following child to /Configuration:
 
@@ -73,7 +140,10 @@ Add the following child to /Configuration:
 
 **The casing of the attributes is important!**
 
-#### 4.2 /Configuration/Authentication/AuthenticationTypes
+### 5 RSReportServer.config
+**Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\rsreportserver.config
+
+#### 5.1 /Configuration/Authentication/AuthenticationTypes
 Change from
 
     <Configuration>
@@ -100,7 +170,7 @@ to
 	    ...
     </Configuration>
 
-#### 4.3 /Configuration/Extensions/Authentication
+#### 5.2 /Configuration/Extensions/Authentication
 Change from
 
     <Configuration>
@@ -129,10 +199,10 @@ to
         ...
     </Configuration>
 
-#### 4.4 /Configuration/UI (cookies to pass through)
+#### 5.3 /Configuration/UI (cookies to pass through)
 Add the following as the first child to /Configuration/UI:
 
-##### 4.4.1 Production-environment (SSL)
+##### 5.3.1 Production-environment (SSL)
 
     <Configuration>
         ...
@@ -149,7 +219,7 @@ Add the following as the first child to /Configuration/UI:
         ...
     </Configuration>
 
-##### 4.4.2 Development-environment (if you are not using SSL)
+##### 5.3.2 Development-environment (if you are not using SSL)
 
     <Configuration>
         ...
@@ -167,7 +237,7 @@ Add the following as the first child to /Configuration/UI:
         ...
     </Configuration>
 
-### 5 RSSrvPolicy.config
+### 6 RSSrvPolicy.config
 **Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\rssrvpolicy.config
 
 Allow RegionOrebroLan-StrongName full trust by adding the following section as the first element under the nested code-group with class "FirstMatchCodeGroup":
@@ -243,8 +313,10 @@ To get the public-key from an assembly:
         %sn% -Tp "C:\Folder\Assembly.dll"
         PAUSE
 
-### 6 Deploy files
+### 7 Deploy files
 Download the file [**Files.zip**](/Files.zip) and extract it. It has the following content:
+  - **13**
+    - RegionOrebroLan.ReportingServices.dll
   - **14**
     - RegionOrebroLan.ReportingServices.dll
   - **15**
@@ -256,123 +328,141 @@ Download the file [**Files.zip**](/Files.zip) and extract it. It has the followi
 
 If you download the files to the Reporting Services server directly they might be blocked and the assemblies will not be granted access. To resolve it you can right-click each downloaded file and choose properties. If it says: *This file came from another computer and might be blocked to help protect this computer.*, unblock it.
 
-Check the version of the following assembly:
-- [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin\Microsoft.ReportingServices.Interfaces.dll
-
-Depending on what you are running:
-- If you are running [Microsoft SQL Server 2017 Reporting Services](https://www.microsoft.com/download/details.aspx?id=55252) the version should be **14.0.600.594**
-- If you are running [Power BI Report Server](https://www.microsoft.com/en-us/download/details.aspx?id=56722) the version should be **15.0.1.130**
-
-#### 6.1 ReportServer
+#### 7.1 Generally - all versions
 Copy the following files to [\[INSTALLATION-PATH\]](#environment)\ReportServer:
 - log4net.config
 
 Copy the following files to [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin:
 - log4net.dll
-- **14**\RegionOrebroLan.ReportingServices.dll or **15**\RegionOrebroLan.ReportingServices.dll (depending on the version you are running)
 - StructureMap.dll
 - StructureMap.Net4.dll
 
-#### 6.2 Portal
+#### 7.2 [**SSRS-13**]
+Copy the following files to [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin:
+- **13**\RegionOrebroLan.ReportingServices.dll
+
+Copy the following files to [\[INSTALLATION-PATH\]](#environment)\RSWebApp:
+- log4net.config
+
+Copy the following files to [\[INSTALLATION-PATH\]](#environment)\RSWebApp\bin:
+- log4net.dll
+- **13**\RegionOrebroLan.ReportingServices.dll
+- StructureMap.dll
+- StructureMap.Net4.dll
+
+#### 7.3 [**SSRS-14**]
+Copy the following files to [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin:
+- **14**\RegionOrebroLan.ReportingServices.dll
+
 Copy the following files to [\[INSTALLATION-PATH\]](#environment)\Portal:
 - log4net.config
 - log4net.dll
-- **14**\RegionOrebroLan.ReportingServices.dll or **15**\RegionOrebroLan.ReportingServices.dll (depending on the version you are running)
+- **14**\RegionOrebroLan.ReportingServices.dll
 - StructureMap.dll
 - StructureMap.Net4.dll
 
-#### 6.3 PowerBI (if using Power BI Report Server)
+#### 7.4 [**PBIRS-15**]
+Copy the following files to [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin:
+- **15**\RegionOrebroLan.ReportingServices.dll
+
+Copy the following files to [\[INSTALLATION-PATH\]](#environment)\Portal:
+- log4net.config
+- log4net.dll
+- **15**\RegionOrebroLan.ReportingServices.dll
+- StructureMap.dll
+- StructureMap.Net4.dll
+
 Copy the following files to [\[INSTALLATION-PATH\]](#environment)\PowerBI:
 - log4net.config
 - log4net.dll
-- **14**\RegionOrebroLan.ReportingServices.dll or **15**\RegionOrebroLan.ReportingServices.dll (depending on the version you are running)
+- **15**\RegionOrebroLan.ReportingServices.dll
 - StructureMap.dll
 - StructureMap.Net4.dll
 
 Copy [\[INSTALLATION-PATH\]](#environment)\ReportServer\bin\Microsoft.ReportingServices.Authorization.dll to [\[INSTALLATION-PATH\]](#environment)\PowerBI.
 
-### 7 Web.config
+### 8 Web.config
 **Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\web.config
 
 To get the thumbprint value (/configuration/system.identityModel/identityConfiguration/issuerNameRegistry/trustedIssuers/add @thumbprint) run the following PowerShell-command on the ADFS-server:
 
     Write-Host (Get-AdfsCertificate -CertificateType "Token-Signing").Thumbprint.ToLower();
 
-Add the following parts to Web.config (change XX to 14 or 15 depending on version):
+Add the following parts to Web.config (change XX to 13, 14 or 15, depending on version):
 
-        <configuration>
+    <configuration>
+        ...
+        <configSections>
+            <section name="structureMap" type="RegionOrebroLan.ReportingServices.StructureMap.Configuration.Section, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
+            <section name="system.identityModel" type="System.IdentityModel.Configuration.SystemIdentityModelSection, System.IdentityModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+            <section name="system.identityModel.services" type="System.IdentityModel.Services.Configuration.SystemIdentityModelServicesSection, System.IdentityModel.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+        </configSections>
+        ...
+        <runtime>
             ...
-            <configSections>
-                <section name="structureMap" type="RegionOrebroLan.ReportingServices.StructureMap.Configuration.Section, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
-                <section name="system.identityModel" type="System.IdentityModel.Configuration.SystemIdentityModelSection, System.IdentityModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-                <section name="system.identityModel.services" type="System.IdentityModel.Services.Configuration.SystemIdentityModelServicesSection, System.IdentityModel.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-            </configSections>
-            ...
-            <runtime>
+            <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
                 ...
-                <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
-                    ...
-                    <dependentAssembly>
-                        <assemblyIdentity name="StructureMap" culture="neutral" publicKeyToken="e60ad81abae3c223" />
-                        <bindingRedirect newVersion="3.1.9.463" oldVersion="0.0.0.0-3.1.9.463" />
-                    </dependentAssembly>
-                    ...
-                </assemblyBinding>
+                <dependentAssembly>
+                    <assemblyIdentity name="StructureMap" culture="neutral" publicKeyToken="e60ad81abae3c223" />
+                    <bindingRedirect newVersion="3.1.9.463" oldVersion="0.0.0.0-3.1.9.463" />
+                </dependentAssembly>
                 ...
-            </runtime>
+            </assemblyBinding>
             ...
-            <structureMap>
-                <registries>
-                    <add type="RegionOrebroLan.ReportingServices.StructureMap.Registry, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
-                </registries>
-            </structureMap>
+        </runtime>
+        ...
+        <structureMap>
+            <registries>
+                <add type="RegionOrebroLan.ReportingServices.StructureMap.Registry, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
+            </registries>
+        </structureMap>
+        ...
+        <system.identityModel>
+            <identityConfiguration>
+                <audienceUris>
+                    <add value="https://reports.local.net/ReportServer/" />
+                </audienceUris>
+                <certificateValidation certificateValidationMode="PeerOrChainTrust" />
+                <claimsAuthenticationManager type="RegionOrebroLan.ReportingServices.Security.Claims.WindowsFederationClaimsAuthenticationManager, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />    
+                <issuerNameRegistry type="System.IdentityModel.Tokens.ConfigurationBasedIssuerNameRegistry, System.IdentityModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+                    <trustedIssuers>
+                        <add name="https://adfs.local.net/adfs/services/trust/" thumbprint="[THUMBPRINT-VALUE]" />
+                    </trustedIssuers>
+                </issuerNameRegistry>
+            </identityConfiguration>
+        </system.identityModel>
+        ...
+        <system.identityModel.services>
+            <federationConfiguration>
+                <cookieHandler requireSsl="true" />
+                <wsFederation issuer="https://adfs.local.net/adfs/ls/" passiveRedirectEnabled="true" realm="https://reports.local.net/ReportServer/" requireHttps="true" />
+            </federationConfiguration>
+        </system.identityModel.services>
+        ...
+        <system.web>
             ...
-            <system.identityModel>
-                <identityConfiguration>
-                    <audienceUris>
-                        <add value="https://reports.local.net/ReportServer/" />
-                    </audienceUris>
-                    <certificateValidation certificateValidationMode="PeerOrChainTrust" />
-                    <claimsAuthenticationManager type="RegionOrebroLan.ReportingServices.Security.Claims.WindowsFederationClaimsAuthenticationManager, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />    
-                    <issuerNameRegistry type="System.IdentityModel.Tokens.ConfigurationBasedIssuerNameRegistry, System.IdentityModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-                        <trustedIssuers>
-                            <add name="https://adfs.local.net/adfs/services/trust/" thumbprint="[THUMBPRINT-VALUE]" />
-                        </trustedIssuers>
-                    </issuerNameRegistry>
-                </identityConfiguration>
-            </system.identityModel>
+            <authorization>
+                <deny users="?" />
+            </authorization>
             ...
-            <system.identityModel.services>
-                <federationConfiguration>
-                    <cookieHandler requireSsl="true" />
-                    <wsFederation issuer="https://adfs.local.net/adfs/ls/" passiveRedirectEnabled="true" realm="https://reports.local.net/ReportServer/" requireHttps="true" />
-                </federationConfiguration>
-            </system.identityModel.services>
+            <httpModules>
+                <clear />
+                <add name="BootstrapperModule" type="RegionOrebroLan.ReportingServices.Web.BootstrapperModule, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
+                <add name="CustomErrorHandlerModule" type="RegionOrebroLan.ReportingServices.Web.ErrorHandlerModule, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
+                <add name="ErrorHandlerModule" type="System.Web.Mobile.ErrorHandlerModule, System.Web.Mobile, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+                <add name="OutputCache" type="System.Web.Caching.OutputCacheModule" />
+                <add name="SessionAuthenticationModule" type="System.IdentityModel.Services.SessionAuthenticationModule, System.IdentityModel.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+                <!-- Must be declared after the SessionAuthenticationModule. -->
+                <add name="FederationAuthenticationModule" type="RegionOrebroLan.ReportingServices.Web.FederationAuthenticationModule, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
+            </httpModules>
             ...
-            <system.web>
-                ...
-                <authorization>
-                    <deny users="?" />
-                </authorization>
-                ,,,
-                <httpModules>
-                    <clear />
-                    <add name="BootstrapperModule" type="RegionOrebroLan.ReportingServices.Web.BootstrapperModule, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
-                    <add name="CustomErrorHandlerModule" type="RegionOrebroLan.ReportingServices.Web.ErrorHandlerModule, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
-                    <add name="ErrorHandlerModule" type="System.Web.Mobile.ErrorHandlerModule, System.Web.Mobile, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-                    <add name="OutputCache" type="System.Web.Caching.OutputCacheModule" />
-                    <add name="SessionAuthenticationModule" type="System.IdentityModel.Services.SessionAuthenticationModule, System.IdentityModel.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-                    <!-- Must be declared after the SessionAuthenticationModule. -->
-                    <add name="FederationAuthenticationModule" type="RegionOrebroLan.ReportingServices.Web.FederationAuthenticationModule, RegionOrebroLan.ReportingServices, Version=XX.0.0.0, Culture=neutral, PublicKeyToken=520b099ae7bbdead" />
-                </httpModules>
-                ...
-                <identity impersonate="false" /><!-- Or remove the identity-element. -->
-                ...
-            </system.web>
+            <identity impersonate="false" /><!-- Or remove the identity-element. -->
             ...
-        </configuration>
+        </system.web>
+        ...
+    </configuration>
 
-### 8 Start the service
+### 9 Start the service
 Start the windows service:
-- **SQL Server Reporting Services (MSSQLSERVER)**, if running SQL Server Reporting Services
-- **Power BI Report Server**, if running Power BI Report Server
+- [**SSRS-13**] & [**SSRS-14**]: **SQL Server Reporting Services (MSSQLSERVER)**
+- [**PBIRS-15**]: **Power BI Report Server**
