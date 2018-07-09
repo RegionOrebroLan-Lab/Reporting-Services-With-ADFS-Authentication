@@ -240,7 +240,37 @@ Add the following as the first child to /Configuration/UI:
 ### 6 RSSrvPolicy.config
 **Path:** [\[INSTALLATION-PATH\]](#environment)\ReportServer\rssrvpolicy.config
 
-Allow RegionOrebroLan-StrongName full trust by adding the following section as the first element under the nested code-group with class "FirstMatchCodeGroup":
+Allow full trust for the assemblies in [**Files.zip**](/Files.zip) by adding the following elements under the **IMembershipCondition**-element of the nested code-group with class *"FirstMatchCodeGroup"*:
+
+    <CodeGroup
+	    Name="Log4Net-StrongName"
+	    class="UnionCodeGroup"
+	    Description="This code group grants Log4Net code full trust."
+	    PermissionSetName="FullTrust"
+	    version="1"
+    >
+	    <IMembershipCondition class="StrongNameMembershipCondition" PublicKeyBlob="0024000004800000940000000602000000240000525341310004000001000100297dcac908e28689360399027b0ea4cd852fbb74e1ed95e695a5ba55cbd1d075ec20cdb5fa6fc593d3d571527b20558d6f39e1f4d5cfe0798428c589c311965244b209c38a02aaa8c9da3b72405b6fedeeb4292c3457e9769b74e645c19cb06c2be75fb2d12281a585fbeabf7bd195d6961ba113286fc3e286d7bbd69024ceda" version="1" />
+    </CodeGroup>
+    <CodeGroup
+	    Name="RegionOrebroLan-StrongName"
+	    class="UnionCodeGroup"
+	    Description="This code group grants RegionOrebroLan code full trust."
+	    PermissionSetName="FullTrust"
+	    version="1"
+    >
+	    <IMembershipCondition class="StrongNameMembershipCondition" PublicKeyBlob="0024000004800000940000000602000000240000525341310004000001000100d5b5f1623c455dd2ce7a24fcb9ad5db0f32a8793bf2925b82d4b4d43ea1058f5cfd6b8136b8cb850715e921a0256ea4188cfc3b257021125f2cf36b3a584eb6caa674831da70eba16f154ae4ca0dc4cd29dc02d8422e5a72416aeb6bcda9b2e9c06f19df1edb5f5403677345c8f06f2612d571628ef43d2bf6d877c91c94e4d3" version="1" />
+    </CodeGroup>
+    <CodeGroup
+	    Name="StructureMap-StrongName"
+	    class="UnionCodeGroup"
+	    Description="This code group grants StructureMap code full trust."
+	    PermissionSetName="FullTrust"
+	    version="1"
+    >
+	    <IMembershipCondition class="StrongNameMembershipCondition" PublicKeyBlob="00240000048000009400000006020000002400005253413100040000010001008d9a2a76e43cd9b1b1944b1f3b489a046b33f0bcd755b25cc5d3ed7b18ded38240d6db7578cd986c72d3feb4f94a7ab26fcfa41e3e4f41cf2c029fba91159db05c44d63f0b2bfac24353a07f4a1230dd3d4240340adafa2275277fa083c75958062cd0e60016701db6af7ae718efdf1e802a840595b49c290964255b3c60c494" version="1" />
+    </CodeGroup>
+
+That is the **IMembershipCondition**-element, with zone *"MyComputer"*, under the nested **CodeGroup**-element with description *"This code group grants MyComputer code Execution permission."*. Like this:
 
     <configuration>
 	    <mscorlib>
@@ -250,6 +280,7 @@ Allow RegionOrebroLan-StrongName full trust by adding the following section as t
 					    <CodeGroup class="FirstMatchCodeGroup" PermissionSetName="Nothing" version="1">
 						    ...
 						    <CodeGroup class="FirstMatchCodeGroup" Description="This code group grants MyComputer code Execution permission. " PermissionSetName="Execution" version="1">
+							    <IMembershipCondition class="ZoneMembershipCondition" version="1" Zone="MyComputer" />
 							    <CodeGroup
 								    Name="Log4Net-StrongName"
 								    class="UnionCodeGroup"
